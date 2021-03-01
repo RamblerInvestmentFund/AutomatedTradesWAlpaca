@@ -1,11 +1,24 @@
-#Pull technical data from AlphaVantage and place trades through Alpaca
+import market_data as md
+import trade_profile as tp
+import config
+import csv
+import pandas as pd
+import asyncio, datetime
 
-from alpha_vantage.techindicators import *
-import matplotlib.pyplot as plt 
-import pandas
 
-ti = TechIndicators(key='TG6UOY62MWPJH9FO', output_format='pandas')
-data, meta_data = ti.get_bbands(symbol='MSFT', interval='60min', time_period=60)
-data.plot()
-plt.title('BBbands indicator for  MSFT stock (60 min)')
-plt.show()
+market = md.MarketData('TSLA')
+profile = tp.TradeProfile()
+
+
+#print(market.get_security_price())
+#market.show_barset()
+
+''' Test Trader'''
+#market.trade_macd()
+market.trade_loop()
+#market.setTicker('NVDA')
+
+''' Test Orders '''
+#profile.simple_order('NVDA', 10, 'buy', 'market', 'gtc')
+#profile.close_position('NVDA')
+#profile.bracket_buy('TSLA', 10, 'buy', 'market', 'gtc')

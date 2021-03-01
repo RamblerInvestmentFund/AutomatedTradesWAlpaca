@@ -7,10 +7,11 @@ import csv
 import config 
 import trade_profile
 
+
 # Market data from Alphavantage
 class MarketData:
     def __init__(self, ticker):
-        # Class variables
+        # Class vars
         self.ticker = ticker
         # API calls
         self.tind = TechIndicators(key=config.ALPHA_VANTAGE_KEY, output_format='pandas') # Note: tech indicators does't support csv
@@ -20,25 +21,46 @@ class MarketData:
         self.big_mac, meta = self.tind.get_macd(symbol=self.ticker, interval='1min')
 
 
+    # Set the stock ticker 
+    def setTicker(self, ticker):
+        self.ticker = ticker
+
+
+    # Get the current price of a security
+    def get_security_price(self):
+        data, meta = self.ts.get_quote_endpoint(self.ticker)
+        df = pd.DataFrame(data=data)
+        current_price = float(df.iloc[0][4])
+        return current_price
+        
+        
     # Get daily historic data for a specified period and write to a csv
     def show_barset(self):
-        historic_data, meta = self.ts.get_daily_adjusted(ticker, outputsize='compact')
+        historic_data, meta = self.ts.get_daily_adjusted(self.ticker, outputsize='compact')
         historic_data.plot()
         plt.title('Historic prices for {}'.format(self.ticker))
         plt.show()
         
 
     # Logic to trade macd
-    # Trade macd if current signal is greater than earlier signal
-    # (NOTE: this is just to test api connections and async update, 
-    # NOT a good trade strategy!!!)
+    # Places a buy order if MACD is 2% above signal line, closes position if 2% below signal
     def trade_macd(self):
         self.big_mac, meta = self.tind.get_macd(symbol=self.ticker, interval='1min', series_type='close')
         df = pd.DataFrame(self.big_mac, columns=['MACD','MACD_Signal'])
-        # place order if signal has increased (again, probably not a good strategy irl)
-        if (df.iloc[0]['MACD_Signal'] > df.iloc[1]['MACD_Signal']):
-            print('Trading on macd')
-            self.tp.place_order(self.ticker, qty=10, side='buy', type='market', time_in_force='gtc')
+        # Get MACD and MACD Signal
+        macd = float(df.iloc[0]['MACD'])
+        signal = float(df.iloc[0]['MACD_Signal'])
+
+        print(df)
+        print('macd is: {}'.format(macd))
+        print('signal is: {}'.format(signal))
+
+        if (macd > signal*1.02 and macd > 0):
+            print('Trading on MACD')
+            self.tp.simple_order(self.ticker, qty=10, side='buy', type='market', time_in_force='gtc')
+        elif (macd < signal*0.98 and macd <= 0):
+            print('MACD is 2% below the signal, closing exisiting positions')
+            self.tp.close_position(self.ticker)
         else:
             print('No trades made')
 
@@ -63,3 +85,6 @@ class MarketData:
             self.trade_macd()
             print(self.big_mac)
             await asyncio.sleep(60)
+
+    
+   
