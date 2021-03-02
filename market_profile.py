@@ -1,10 +1,10 @@
 import alpaca_trade_api as tradeapi
-import market_data as md
+import algo_trader as at
 import config
 
 
-# TradeProfile provides basic access to Alpaca trading account
-class TradeProfile:
+# MarketProfile provides basic access to Alpaca trading account
+class MarketProfile:
     def __init__(self):
         # API calls
         self.paca = tradeapi.REST(config.ALPACA_API_KEY, config.ALPACA_SECRET_KEY,
@@ -14,8 +14,6 @@ class TradeProfile:
     # Show Alpaca trading account balance
     def get_account_balance(self):
         account = self.paca.get_account()
-        if account.trading_blocked:
-            print('Account is currently restricted from trading.')
         print('${} is available as buying power.'.format(account.buying_power))
         return account
 
@@ -39,19 +37,18 @@ class TradeProfile:
 
     # Close exisiting position on a stock
     def close_position(self, symbol):
-        # If user holds a position, close it
         try:
             position = self.paca.get_position(symbol)
-            print('Closing position for {}...'.format(symbol))
+            print('Closing position for {}...\n'.format(symbol))
             self.paca.close_position(symbol)
         except:
-            print('No positions held')
+            print('No positions held for {}\n'.format(symbol))
 
 
     # Place a simple order
     def simple_order(self, symbol, qty, side, type, time_in_force):
         # Get quote endpoint
-        data = md.MarketData(symbol)
+        data = at.AlgoTrader(symbol)
         current_price = data.get_security_price()
         print(current_price)
         print('Placing order...')
@@ -63,17 +60,17 @@ class TradeProfile:
             qty=qty,
             time_in_force=time_in_force,
         )
-        print('Bought 10 shares of {}'.format(symbol))
+        print('Bought 10 shares of {}\n'.format(symbol))
 
 
     # Place a bracket order
     def bracket_order(self, symbol, qty, side, type, time_in_force):
         # Get quote endpoint
-        data = md.MarketData(symbol)
-        current_price = data.get_security_price()
+        data = at.AlgoTrader(symbol)
+        current_price = data.get_security_price(symbol)
         print(current_price)
-        print('Placing order...')
-        # Place an order with stop loss @ -5%; take profit @ +3%
+        print('Placing order for {}'.format(symbol))
+        # Place an order with stop loss @ -10%; take profit @ +2%
         self.paca.submit_order(
             symbol=symbol,
             side=side,
@@ -81,11 +78,11 @@ class TradeProfile:
             qty=qty,
             time_in_force=time_in_force,
             order_class='bracket',
-            stop_loss={'stop_price': current_price * 0.95,
-                         'limit price': current_price * 0.94},
-            take_profit={'limit_price': current_price * 1.03}
+            stop_loss={'stop_price': current_price * 0.90,
+                         'limit price': current_price * 0.91},
+            take_profit={'limit_price': current_price * 1.02}
         )
-        print('Bought 10 shares of {} with stop price @ -5% and limit price @ +3%'.format(symbol))
+        print('Bought 10 shares of {} with stop price @ -5% and limit @ +3%\n'.format(symbol))
 
     
         

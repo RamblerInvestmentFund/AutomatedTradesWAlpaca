@@ -1,22 +1,16 @@
-import market_data as md
-import trade_profile as tp
+import algo_trader as at
+import market_profile as mp
 import config
-import csv
-import pandas as pd
-import asyncio, datetime
 
 
-market = md.MarketData('TSLA')
-profile = tp.TradeProfile()
-
-
-#print(market.get_security_price())
-#market.show_barset()
+trader = at.AlgoTrader(config.universe)
+profile = mp.MarketProfile()
 
 ''' Test Trader'''
-#market.trade_macd()
-market.trade_loop()
-#market.setTicker('NVDA')
+trader.trade_macd()
+#trader.setTicker('NVDA')
+#trader.trade_loop()
+#print(trader.get_security_price())
 
 ''' Test Orders '''
 #profile.simple_order('NVDA', 10, 'buy', 'market', 'gtc')
