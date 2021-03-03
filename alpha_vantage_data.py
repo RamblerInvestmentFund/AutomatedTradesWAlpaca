@@ -22,8 +22,8 @@ class AlphaVantageData:
         bb, bb_metadata = self.ti.get_bbands(symbol=self.sym, interval='60min', time_period=60)
         data_ts, metadata_ts = self.ts.get_intraday(symbol=self.sym, interval='60min', outputsize='full')
         #real vars taken from anthony
-        real_middle = bb['2021-03-01 16:00:00']['Real Middle Band'].item()
-        real_close = data_ts['2021-03-01 16:00:00']['4. close'].item()
+        real_middle = bb.loc['2021-03-01 16:00:00']['Real Middle Band'].item()
+        real_close = data_ts.loc['2021-03-01 16:00:00']['4. close'].item()
 
         if(real_middle < real_close):  
             self.ap.send_basic_order( self.sym, 1, 'buy', 'bracket', 'gtc')
