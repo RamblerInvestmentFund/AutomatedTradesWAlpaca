@@ -1,3 +1,4 @@
+#connections with alpaca profile
 import alpaca_trade_api as tradeapi
 import time
 import threading
@@ -48,7 +49,7 @@ class Profile():
                     self.api.submit_order(symbol=sym, qty=abs(qty), side=side, type=order_type, time_in_force=time_in_force)
                 except Exception as e:
                     print(
-                        f"Error: {str(e)}. Order of | {abs(qty) + abs(q2)} {sym} {side} | partially sent ({abs(q2)} shares sent).")
+                        f"Error line 52: {str(e)}. Order of | {abs(qty) + abs(q2)} {sym} {side} | partially sent ({abs(q2)} shares sent).")
                     return False
             else:
                 self.api.submit_order(symbol=sym, qty=abs(qty), side=side, type=order_type, time_in_force=time_in_force)
@@ -56,7 +57,7 @@ class Profile():
             return True
         except Exception as e:
             print(
-                f"Error: {str(e)}. Order of | {abs(qty) + abs(q2)} {sym} {side} | not sent.")
+                f"Error line 60: {str(e)}. Order of | {abs(qty) + abs(q2)} {sym} {side} | not sent.")
             return False
 
     def confirm_full_execution(self, sym, qty, side, expected_qty, order_type, time_in_force):

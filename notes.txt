@@ -5,3 +5,6 @@
 "type": "market",
 "time_in_force": "day"
 }
+
+https://github.com/alpacahq/example-portfolio-manager
+https://github.com/Derrick-Sherrill/alpha-vantage-examples

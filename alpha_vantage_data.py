@@ -1,3 +1,4 @@
+#where the trading algos using alphavantage are
 from alpha_vantage.techindicators import TechIndicators
 from alpha_vantage.timeseries import TimeSeries
 import matplotlib.pyplot as plt 
@@ -26,5 +27,5 @@ class AlphaVantageData:
         real_close = data_ts.loc['2021-03-01 16:00:00']['4. close'].item()
 
         if(real_middle < real_close):  
-            self.ap.send_basic_order( self.sym, 1, 'buy', 'bracket', 'gtc')
+            self.ap.send_basic_order( self.sym, 1, 'buy', 'market', 'gtc')
         
