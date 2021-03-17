@@ -15,6 +15,13 @@ import time
 #algo.tradeBB()
 
 america = am.Ameritrade('TSLA')
+print(america.history["close"])
+i=0
+print(america.history["close"].size)
+while(i<america.history["close"].size):
+    print(america.history["close"][i])
+    i=i+1
+    time.sleep(1)
 #america.get_history(key = america.key, symbol=america.sym, periodType='month', period=2, frequencyType='daily', frequency=1)
 while(True):
     print("tesla price history:\n", america.history)

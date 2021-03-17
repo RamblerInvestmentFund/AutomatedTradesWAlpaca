@@ -33,11 +33,14 @@ class Ameritrade:
         history = self.history
 
         for item in (history):
-            item['30 Day MA'] = item["close"].rolling(window=20).mean()
+            item["30 Day MA"] = item["close"].rolling(window=20).mean()
     
-            # set .std(ddof=0) for population std instead of sample
             item['30 Day STD'] = item["close"].rolling(window=20).std() 
             
             item['Upper Band'] = item["close"] + (item['30 Day STD'] * 2)
             item['Lower Band'] = item["close"] - (item['30 Day STD'] * 2)
+        
+        
+
+        self.history = history
 
