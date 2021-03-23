@@ -1,5 +1,5 @@
 import alpaca_trade_api as tradeapi
-import algo_trader as at
+import ameritrader as am
 import config
 
 
@@ -48,8 +48,7 @@ class MarketProfile:
     # Place a simple order
     def simple_order(self, symbol, qty, side, type, time_in_force):
         # Get quote endpoint
-        data = at.AlgoTrader(symbol)
-        current_price = data.get_security_price()
+        current_price = am.get_current_price(symbol)
         print(current_price)
         print('Placing order...')
         # Place an order
@@ -66,8 +65,7 @@ class MarketProfile:
     # Place a bracket order
     def bracket_order(self, symbol, qty, side, type, time_in_force):
         # Get quote endpoint
-        data = at.AlgoTrader(symbol)
-        current_price = data.get_security_price(symbol)
+        current_price = am.get_current_price(symbol)
         print(current_price)
         print('Placing order for {}'.format(symbol))
         # Place an order with stop loss @ -10%; take profit @ +2%

@@ -7,7 +7,7 @@ trader = at.AlgoTrader(config.universe)
 profile = mp.MarketProfile()
 
 ''' Test Trader'''
-trader.trade_macd()
+trader.trade_loop()
 #trader.setTicker('NVDA')
 #trader.trade_loop()
 #print(trader.get_security_price())

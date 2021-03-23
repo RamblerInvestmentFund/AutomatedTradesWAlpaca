@@ -57,7 +57,7 @@ class AlgoTrader:
 
     
     # Initialize the trade loop: checks indicators every 5 minutes
-    # call order:   trade_loop() --> update_indicators() --> trade_macd() --> *repeat until close
+    # Call order:   trade_loop() --> update_indicators() --> trade_macd() --> *repeat until close
     def trade_loop(self): 
         loop = asyncio.get_event_loop()
         try:
@@ -74,7 +74,7 @@ class AlgoTrader:
         while True:
             print('\nchecking indicators...')
             self.trade_macd()
-            await asyncio.sleep(300)
+            await asyncio.sleep(60)
 
     
    
