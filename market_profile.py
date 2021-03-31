@@ -1,7 +1,7 @@
 import alpaca_trade_api as tradeapi
-import ameritrader as am
+import yfinance as yf
 import config
-
+import pandas as pd
 
 # MarketProfile provides basic access to Alpaca trading account
 class MarketProfile:
@@ -11,29 +11,14 @@ class MarketProfile:
                                   config.ALPACA_BASE_URL, api_version='v2')
 
 
-    # Show Alpaca trading account balance
-    def get_account_balance(self):
-        account = self.paca.get_account()
-        print('${} is available as buying power.'.format(account.buying_power))
-        return account
+    # Check if a position is held
+    def has_position(self, symbol):
+        try:
+            position = self.paca.get_position(symbol)
+            return True
+        except:
+            return False
 
-
-    # Get a list of info on current orders and positions
-    def list_info(self):
-        # List of orders
-        my_orders = self.paca.list_orders()
-        if not my_orders:
-            print("No active orders")
-        else:
-            print(my_orders)
-
-        # List of positions
-        my_positions = self.paca.list_positions()
-        if not my_positions:
-            print("No current positions")
-        else:
-            print(my_positions)
-    
 
     # Close exisiting position on a stock
     def close_position(self, symbol):
@@ -48,7 +33,7 @@ class MarketProfile:
     # Place a simple order
     def simple_order(self, symbol, qty, side, type, time_in_force):
         # Get quote endpoint
-        current_price = am.get_current_price(symbol)
+        current_price = self.get_price(symbol)
         print(current_price)
         print('Placing order...')
         # Place an order
@@ -65,8 +50,7 @@ class MarketProfile:
     # Place a bracket order
     def bracket_order(self, symbol, qty, side, type, time_in_force):
         # Get quote endpoint
-        current_price = am.get_current_price(symbol)
-        print(current_price)
+        current_price = self.get_price(symbol)
         print('Placing order for {}'.format(symbol))
         # Place an order with stop loss @ -10%; take profit @ +2%
         self.paca.submit_order(
@@ -80,7 +64,15 @@ class MarketProfile:
                          'limit price': current_price * 0.91},
             take_profit={'limit_price': current_price * 1.02}
         )
-        print('Bought 10 shares of {} with stop price @ -5% and limit @ +3%\n'.format(symbol))
+        print('Bought 10 shares of {} at {} per share with stop price @ -5% and limit @ +3%\n'.format(symbol, current_price))
 
-    
+
+    # Get the current asking price using yfinance
+    def get_price(self, ticker):
+        stock =  yf.Ticker(ticker)
+        current = stock.info.get('ask')
+        return current
         
+    
+mp = MarketProfile()
+#print(mp.get_price('SPY'))
