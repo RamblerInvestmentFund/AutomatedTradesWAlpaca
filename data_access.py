@@ -14,7 +14,7 @@ def update_csv(tickers):
     '''
 
     for ticker in tickers:
-        data = yf.download(tickers=ticker, group_by='Close', interval='1d', period='2mo')
+        data = yf.download(tickers=ticker, group_by='Close', interval='15m', period='45d')
         close = data['Close']
         close_list = close.to_csv('C:\python_projects\AlgoTrader\daily_data\stock_data_{ticker}.csv'.format(ticker=ticker))
     return close_list

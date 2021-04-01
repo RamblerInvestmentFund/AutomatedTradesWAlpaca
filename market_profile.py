@@ -19,6 +19,10 @@ class MarketProfile:
         except:
             return False
 
+    # Get the total value of the account
+    def get_total_equity(self):
+        account = self.paca.get_account()
+        return account.equity
 
     # Close exisiting position on a stock
     def close_position(self, symbol):
@@ -48,16 +52,18 @@ class MarketProfile:
 
 
     # Place a bracket order
-    def bracket_order(self, symbol, qty, side, type, time_in_force):
+    def bracket_order(self, symbol, side, type, time_in_force):
         # Get quote endpoint
         current_price = self.get_price(symbol)
+        # Number of shares purchased is based off of the 10 stocks we are trading and 75% of portfolio value
+        shares = ((self.get_total_equity()*0.75)/10)/current_price 
         print('Placing order for {}'.format(symbol))
         # Place an order with stop loss @ -10%; take profit @ +2%
         self.paca.submit_order(
             symbol=symbol,
             side=side,
             type=type,
-            qty=qty,
+            qty=shares,
             time_in_force=time_in_force,
             order_class='bracket',
             stop_loss={'stop_price': current_price * 0.90,
@@ -75,4 +81,5 @@ class MarketProfile:
         
     
 mp = MarketProfile()
+mp.get_total_equity()
 #print(mp.get_price('SPY'))

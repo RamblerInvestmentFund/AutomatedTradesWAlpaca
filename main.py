@@ -6,18 +6,9 @@ import asyncio
 import time
 
 
-STOCK_BASKET = ['AAPL', 'GOOG', 'AMZN', 'FB']
+STOCK_BASKET = ['ENTG', 'ESNT', 'GRBK', 'HMY', 'QRVO', 'NOVA', 'LAC', 'TSLA', 'ARKK', 'SHW']
 
 def main():
-
-    # Update csv
-    dao.update_csv(STOCK_BASKET)
-
-    # Compute macd
-    for ticker in STOCK_BASKET:
-        ind.macd('C:\python_projects\AlgoTrader\daily_data\stock_data_{}.csv'.format(ticker))
-
-    # begin trade loop
     trade_loop()
 
 
@@ -27,6 +18,14 @@ def trade_algo():
         - if the MACD is above the signal line by 1 or more, place a trade
         - else if MACD is below the signal line by 1 or more, close existing positions
     '''
+
+    # Update csv
+    dao.update_csv(STOCK_BASKET)
+
+    # Compute macd
+    for ticker in STOCK_BASKET:
+        ind.macd('C:\python_projects\AlgoTrader\daily_data\stock_data_{}.csv'.format(ticker), '15m')
+
     market = mp.MarketProfile()
     for ticker in STOCK_BASKET:
         df = pd.read_csv('C:\python_projects\AlgoTrader\daily_data\stock_data_{}.csv'.format(ticker))
@@ -34,7 +33,7 @@ def trade_algo():
         if (hist > 1):
             print('MACD is for {} is above the signal line, attempting to placing trade'.format(ticker))
             if (not market.has_position(ticker)):
-                market.bracket_order(symbol=ticker, qty=10, side='buy', type='market', time_in_force='gtc')
+                market.bracket_order(symbol=ticker, side='buy', type='market', time_in_force='gtc')
             else:
                 print('Already hold shares of {}, no trades made'.format(ticker))
         elif (hist < -1):
@@ -63,7 +62,7 @@ async def update_indicators():
     while True:
         print('\nchecking indicators...')
         trade_algo()
-        await asyncio.sleep(300)
+        await asyncio.sleep(900)
 
 
 if __name__=='__main__':
